@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Email Templates{% endblock %}
+{% block content %}
+<h1>Phishing Template Creator</h1>
+<div class="grid-2">
+  <div class="card">
+    <h3>New Template</h3>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Template Name <input type="text" name="name" required placeholder="e.g. Password Reset Alert"></label>
+      <label>Category
+        <select name="category">
+          <option>Credentials</option><option>Finance</option><option>Reward</option>
+          <option>IT</option><option>General</option>
+        </select>
+      </label>
+      <label>Sender Name <input type="text" name="sender_name" required placeholder="IT Support"></label>
+      <label>Sender Email <input type="text" name="sender_email" required placeholder="it-support@company-helpdesk.co"></label>
+      <label>Subject <input type="text" name="subject" required></label>
+      <label>Email Body (HTML)
+        <textarea name="body" rows="7" required placeholder="Use {{'{{NAME}}'}} and {{'{{LINK}}'}} as placeholders"></textarea>
+      </label>
+      <label>Red Flags (one per line, shown to the user after they click)
+        <textarea name="red_flags" rows="4" placeholder="Urgent deadline&#10;Sender domain doesn't match the real company&#10;Generic greeting"></textarea>
+      </label>
+      <button class="btn btn-primary" type="submit">Save Template</button>
+    </form>
+  </div>
+  <div class="card">
+    <h3>Existing Templates ({{ rows|length }})</h3>
+    {% for t in rows %}
+      <div class="tpl-item">
+        <div class="tpl-item-head">
+          <strong>{{ t.name }}</strong>
+          <span class="badge badge-active">{{ t.category }}</span>
+        </div>
+        <div class="muted">From: {{ t.sender_name }} &lt;{{ t.sender_email }}&gt;</div>
+        <div class="muted">Subject: {{ t.subject }}</div>
+        <form method="post" onsubmit="return confirm('Delete this template?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="delete">
+          <input type="hidden" name="template_id" value="{{ t.id }}">
+          <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+        </form>
+      </div>
+    {% else %}
+      <p class="muted">No templates yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

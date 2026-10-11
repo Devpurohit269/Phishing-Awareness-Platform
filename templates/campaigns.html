@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Campaigns{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Campaigns</h1>
+  <a class="btn btn-primary" href="{{ url_for('create_campaign') }}">+ New Campaign</a>
+</div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>Name</th><th>Template</th><th>Status</th><th>Targets</th><th>Sent</th><th>Clicked</th><th>Click Rate</th></tr></thead>
+    <tbody>
+    {% for c in rows %}
+      <tr>
+        <td><a href="{{ url_for('campaign_detail', cid=c.id) }}">{{ c.name }}</a></td>
+        <td>{{ c.template }}</td>
+        <td><span class="badge badge-{{ c.status }}">{{ c.status }}</span></td>
+        <td>{{ c.targets }}</td>
+        <td>{{ c.sent }}</td>
+        <td>{{ c.clicked }}</td>
+        <td>{{ c.rate }}%</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="muted">No campaigns yet. Create one to get started.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

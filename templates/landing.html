@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulated Phishing Test</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<main class="container">
+  <div class="awareness-card">
+    <div class="awareness-icon">⚠️</div>
+    <h1>You just clicked a simulated phishing link</h1>
+    <p class="muted">Hi {{ name }}, don't worry — this was a safe, internal training exercise
+      (template: "{{ template }}"). No password or personal data was collected. This page exists
+      so the lesson sticks at the exact moment it matters.</p>
+
+    <h3>What gave it away</h3>
+    <ul class="flag-list">
+      {% for f in flags %}<li>{{ f }}</li>{% endfor %}
+    </ul>
+
+    <h3>Next time, before you click</h3>
+    <ul class="flag-list">
+      <li>Hover over links to see where they really go before clicking</li>
+      <li>Check the sender's actual email address, not just the display name</li>
+      <li>Be suspicious of urgency ("act now", "expires today")</li>
+      <li>When in doubt, report it instead of clicking</li>
+    </ul>
+    <p class="muted small">This simulation is run internally with management approval, purely for education.</p>
+  </div>
+</main>
+</body>
+</html>

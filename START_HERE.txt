@@ -1,0 +1,20 @@
+PHISHGUARD - RUN IN VS CODE
+
+1. Extract this folder.
+2. Open the Phishing-Awareness-Platform folder in VS Code.
+3. Open Terminal > New Terminal.
+4. Run: RUN_PROJECT.bat
+5. Open http://127.0.0.1:5000
+6. Admin login: username admin, password admin123
+
+ONE-CLICK VS CODE:
+Press F5 and select "PhishGuard - Run Flask". The VS Code task/launch files are included.
+
+OPTIONAL DEMO DATA:
+The included database.db already contains demo data (12 users, 3 templates, 3 campaigns, and click history).
+If you ever start with an empty database, run:
+    .venv\Scripts\python.exe app.py seed
+
+IMPORTANT:
+Do NOT use Live Server for this Flask project. Flask serves the HTML templates and static CSS/JS itself.
+Stop the server with Ctrl+C in the terminal.

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ c.name }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('campaigns') }}">&larr; Back to Campaigns</a>
+<div class="page-head">
+  <h1>{{ c.name }}</h1>
+  <span class="badge badge-{{ c.status }}">{{ c.status }}</span>
+</div>
+
+{% if dry %}
+<div class="flash flash-info">Dry-run mode: SMTP is not configured, so no real emails are sent.
+  Launch below to generate tracking links you can click yourself to test the full flow.</div>
+{% endif %}
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="stat-num">{{ c.targets }}</div><div class="stat-label">Targets</div></div>
+  <div class="stat-card"><div class="stat-num">{{ c.sent }}</div><div class="stat-label">Sent</div></div>
+  <div class="stat-card"><div class="stat-num">{{ c.clicked }}</div><div class="stat-label">Clicked</div></div>
+  <div class="stat-card"><div class="stat-num">{{ c.rate }}%</div><div class="stat-label">Click Rate</div></div>
+</div>
+
+<div class="card">
+  <h3>Template: {{ tpl.name }}</h3>
+  <p class="muted">From: {{ tpl.sender_name }} &lt;{{ tpl.sender_email }}&gt; · Subject: {{ tpl.subject }}</p>
+</div>
+
+<div class="page-head">
+  <h3>Targets</h3>
+  <form method="post" action="{{ url_for('launch_campaign', cid=c.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-primary" type="submit">🚀 Launch / Resend Pending</button>
+  </form>
+</div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>Employee</th><th>Status</th><th>Sent At</th><th>Clicked</th><th>Tracking Link</th></tr></thead>
+    <tbody>
+    {% for t in targets %}
+      <tr>
+        <td>{{ t.name }} <span class="muted">({{ t.email }})</span></td>
+        <td><span class="badge badge-{{ t.send_status }}">{{ t.send_status }}</span></td>
+        <td>{{ t.sent_at or '—' }}</td>
+        <td>{% if t.clicked_at %}<span class="badge badge-high">{{ t.clicked_at }}</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+        <td><code class="tracking-link">{{ base_url }}/t/{{ t.token }}</code></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<form method="post" action="{{ url_for('delete_campaign', cid=c.id) }}" onsubmit="return confirm('Delete this campaign and all its data?');">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button class="btn btn-ghost" type="submit">Delete Campaign</button>
+</form>
+{% endblock %}

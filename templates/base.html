@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Phishing Awareness Platform{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+{% if session.get('admin') %}
+<nav class="nav">
+  <div class="nav-brand">🔐 Phishing Awareness Platform</div>
+  <div class="nav-links">
+    <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">Dashboard</a>
+    <a href="{{ url_for('users') }}" class="{{ 'active' if request.endpoint in ['users','user_history'] }}">Users</a>
+    <a href="{{ url_for('phishing_templates') }}" class="{{ 'active' if request.endpoint=='phishing_templates' }}">Templates</a>
+    <a href="{{ url_for('campaigns') }}" class="{{ 'active' if request.endpoint in ['campaigns','create_campaign','campaign_detail'] }}">Campaigns</a>
+    <a href="{{ url_for('report') }}" class="{{ 'active' if request.endpoint=='report' }}">Reports</a>
+  </div>
+  <form method="post" action="{{ url_for('logout') }}" class="nav-logout">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <span class="nav-user">{{ session['admin'] }}</span>
+    <button type="submit" class="btn btn-ghost">Logout</button>
+  </form>
+</nav>
+{% endif %}
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack">
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

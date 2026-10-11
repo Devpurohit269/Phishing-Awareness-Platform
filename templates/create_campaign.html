@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Create Campaign{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('campaigns') }}">&larr; Back to Campaigns</a>
+<h1>Create Campaign</h1>
+<form method="post" class="card">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Campaign Name <input type="text" name="name" required placeholder="e.g. Q1 Security Awareness Test"></label>
+  <label>Email Template
+    <select name="template_id" required>
+      <option value="">Select a template…</option>
+      {% for t in tpls %}<option value="{{ t.id }}">{{ t.name }} ({{ t.category }})</option>{% endfor %}
+    </select>
+  </label>
+  {% if not tpls %}<p class="flash flash-error">Create an email template first.</p>{% endif %}
+
+  <label>Select Users</label>
+  <div class="select-toolbar">
+    <button type="button" class="btn btn-ghost btn-sm" onclick="toggleAll(true)">Select all</button>
+    <button type="button" class="btn btn-ghost btn-sm" onclick="toggleAll(false)">Clear</button>
+  </div>
+  <div class="user-pick-list">
+    {% for u in people %}
+      <label class="user-pick-row">
+        <input type="checkbox" name="user_ids" value="{{ u.id }}">
+        <span>{{ u.name }}</span> <span class="muted">{{ u.email }} · {{ u.department }}</span>
+      </label>
+    {% else %}
+      <p class="muted">No users yet — add some on the Users page first.</p>
+    {% endfor %}
+  </div>
+  <button class="btn btn-primary" type="submit" {{ 'disabled' if not tpls or not people }}>Create Campaign</button>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+function toggleAll(state) {
+  document.querySelectorAll('.user-pick-list input[type=checkbox]').forEach(cb => cb.checked = state);
+}
+</script>
+{% endblock %}

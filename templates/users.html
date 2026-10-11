@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<h1>User Management</h1>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Add User</h3>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="add">
+      <label>Name <input type="text" name="name" required></label>
+      <label>Email <input type="email" name="email" required></label>
+      <label>Department
+        <select name="department">
+          <option>General</option><option>IT</option><option>Finance</option>
+          <option>HR</option><option>Sales</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" type="submit">Add User</button>
+    </form>
+  </div>
+  <div class="card">
+    <h3>Import Users (CSV)</h3>
+    <p class="muted">Columns: <code>name,email,department</code></p>
+    <form method="post" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="import">
+      <label>CSV file <input type="file" name="csv_file" accept=".csv" required></label>
+      <button class="btn btn-primary" type="submit">Import</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <h3>All Users ({{ rows|length }})</h3>
+  <table class="table">
+    <thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Risk</th><th></th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td><a href="{{ url_for('user_history', user_id=r.id) }}">{{ r.name }}</a></td>
+        <td>{{ r.email }}</td>
+        <td>{{ r.department }}</td>
+        <td>{% if r.received %}<span class="badge badge-{{ r.level|lower }}">{{ r.score }}% · {{ r.level }}</span>{% else %}<span class="muted">No data</span>{% endif %}</td>
+        <td>
+          <form method="post" onsubmit="return confirm('Remove this user?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="user_id" value="{{ r.id }}">
+            <button class="btn btn-ghost btn-sm" type="submit">Remove</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5" class="muted">No users yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

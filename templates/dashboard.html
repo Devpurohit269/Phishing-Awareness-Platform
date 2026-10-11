@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<div class="stat-grid">
+  <div class="stat-card"><div class="stat-num">{{ summary.users }}</div><div class="stat-label">Total Users</div></div>
+  <div class="stat-card"><div class="stat-num">{{ summary.campaigns }}</div><div class="stat-label">Campaigns</div></div>
+  <div class="stat-card"><div class="stat-num">{{ summary.sent }}</div><div class="stat-label">Emails Sent</div></div>
+  <div class="stat-card"><div class="stat-num">{{ summary.click_rate }}%</div><div class="stat-label">Click Rate</div></div>
+  <div class="stat-card"><div class="stat-num">{{ summary.avg_risk }}%</div><div class="stat-label">Avg Risk Score</div></div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Click Rate by Campaign</h3>
+    <canvas id="campaignChart" height="220"></canvas>
+  </div>
+  <div class="card">
+    <h3>Top 5 At-Risk Employees</h3>
+    {% if top %}
+    <table class="table">
+      <thead><tr><th>Name</th><th>Department</th><th>Risk</th></tr></thead>
+      <tbody>
+      {% for r in top %}
+        <tr>
+          <td><a href="{{ url_for('user_history', user_id=r.id) }}">{{ r.name }}</a></td>
+          <td>{{ r.department }}</td>
+          <td><span class="badge badge-{{ r.level|lower }}">{{ r.score }}% · {{ r.level }}</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="muted">No campaign data yet. Launch a campaign to see results, or run <code>python app.py seed</code> for demo data.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <h3>Recent Campaigns</h3>
+  <table class="table">
+    <thead><tr><th>Name</th><th>Status</th><th>Sent</th><th>Clicked</th><th>Click Rate</th></tr></thead>
+    <tbody>
+    {% for c in stats %}
+      <tr>
+        <td><a href="{{ url_for('campaign_detail', cid=c.id) }}">{{ c.name }}</a></td>
+        <td><span class="badge badge-{{ c.status }}">{{ c.status }}</span></td>
+        <td>{{ c.sent }}</td>
+        <td>{{ c.clicked }}</td>
+        <td>{{ c.rate }}%</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5" class="muted">No campaigns yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('campaignChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ stats|map(attribute='name')|list|tojson }},
+    datasets: [{ label: 'Click rate %', data: {{ stats|map(attribute='rate')|list|tojson }}, backgroundColor: '#2563eb' }]
+  },
+  options: { scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

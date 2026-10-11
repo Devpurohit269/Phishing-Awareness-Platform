@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ u.name }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('users') }}">&larr; Back to Users</a>
+<h1>{{ u.name }}</h1>
+<p class="muted">{{ u.email }} · {{ u.department }}</p>
+<div class="stat-grid">
+  <div class="stat-card"><div class="stat-num">{{ u.received }}</div><div class="stat-label">Emails Received</div></div>
+  <div class="stat-card"><div class="stat-num">{{ u.clicked }}</div><div class="stat-label">Times Clicked</div></div>
+  <div class="stat-card"><div class="stat-num">{{ u.score }}%</div><div class="stat-label">Risk Score ({{ u.level }})</div></div>
+</div>
+<div class="card">
+  <h3>Campaign History</h3>
+  <table class="table">
+    <thead><tr><th>Campaign</th><th>Template</th><th>Status</th><th>Sent</th><th>Clicked</th></tr></thead>
+    <tbody>
+    {% for h in history %}
+      <tr>
+        <td>{{ h.campaign }}</td><td>{{ h.template }}</td>
+        <td><span class="badge badge-{{ h.send_status }}">{{ h.send_status }}</span></td>
+        <td>{{ h.sent_at or '—' }}</td>
+        <td>{% if h.clicked_at %}<span class="badge badge-high">Clicked {{ h.clicked_at }}</span>{% else %}<span class="badge badge-low">Did not click</span>{% endif %}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5" class="muted">No campaigns involving this user yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Reports</h1>
+  <a class="btn btn-primary" href="{{ url_for('report_csv') }}">⬇ Download CSV</a>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Click Rate by Department</h3>
+    <canvas id="deptChart" height="220"></canvas>
+  </div>
+  <div class="card">
+    <h3>Click Rate by Campaign (Progress Over Time)</h3>
+    <canvas id="progressChart" height="220"></canvas>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Employee Risk Scores</h3>
+  <table class="table">
+    <thead><tr><th>Name</th><th>Department</th><th>Received</th><th>Clicked</th><th>Risk Score</th></tr></thead>
+    <tbody>
+    {% for r in risks %}
+      <tr>
+        <td>{{ r.name }}</td><td>{{ r.department }}</td><td>{{ r.received }}</td><td>{{ r.clicked }}</td>
+        <td>{% if r.received %}<span class="badge badge-{{ r.level|lower }}">{{ r.score }}% · {{ r.level }}</span>{% else %}<span class="muted">No data</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('deptChart'), {
+  type: 'bar',
+  data: { labels: {{ depts|map(attribute='department')|list|tojson }},
+          datasets: [{ label: 'Click rate %', data: {{ depts|map(attribute='rate')|list|tojson }}, backgroundColor: '#dc2626' }] },
+  options: { scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('progressChart'), {
+  type: 'line',
+  data: { labels: {{ stats|map(attribute='name')|list|tojson }},
+          datasets: [{ label: 'Click rate %', data: {{ stats|map(attribute='rate')|list|tojson }}, borderColor: '#2563eb', backgroundColor: '#2563eb33', fill: true, tension: 0.3 }] },
+  options: { scales: { y: { beginAtZero: true, max: 100 } } }
+});
+</script>
+{% endblock %}
