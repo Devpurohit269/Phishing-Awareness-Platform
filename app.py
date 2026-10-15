@@ -47,13 +47,35 @@ TOKEN_RE = re.compile(r"^[A-Za-z0-9_\-]{10,64}$")
 
 
 def get_secret_key():
-    if os.environ.get("SECRET_KEY"):
-        return os.environ["SECRET_KEY"]
-    if not os.path.exists(KEY_PATH):
-        with open(KEY_PATH, "w") as f:
-            f.write(secrets.token_hex(32))
-    with open(KEY_PATH) as f:
-        return f.read().strip()
+    
+import os
+import secrets
+
+def get_secret_key():
+    # Use a secret configured in Vercel.
+    key = os.environ.get("SECRET_KEY")
+    if key:
+        return key
+
+    # Local development fallback.
+    key_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".secret_key")
+
+    try:
+        if os.path.exists(key_path):
+            with open(key_path, "r", encoding="utf-8") as f:
+                key = f.read().strip()
+                if key:
+                    return key
+
+        key = secrets.token_hex(32)
+        with open(key_path, "w", encoding="utf-8") as f:
+            f.write(key)
+        return key
+
+    except OSError:
+        # Serverless fallback when the application directory is read-only.
+        return secrets.token_hex(32)
+
 
 
 app = Flask(__name__)
