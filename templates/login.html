@@ -1,18 +1,23 @@
-
+```html
 {% extends "base.html" %}
+
 {% block title %}Admin Login | PhishGuard{% endblock %}
 
 {% block content %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}">
+
 <section class="login-page">
     <div class="login-layout">
 
         <!-- Left welcome section -->
         <div class="login-welcome">
-            <span class="login-badge">CYBERSECURITY AWARENESS</span>
 
-            <h1>Welcome Back to <span>PhishGuard</span></h1>
+            <span class="login-badge">
+                CYBERSECURITY AWARENESS
+            </span>
+
+            <h1>
+                Welcome Back to <span>PhishGuard</span>
+            </h1>
 
             <p class="login-description">
                 Secure your organization with smarter phishing awareness
@@ -21,8 +26,9 @@
             </p>
 
             <div class="login-benefits">
+
                 <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
+                    <span class="benefit-icon" aria-hidden="true">✓</span>
                     <div>
                         <strong>Campaign Management</strong>
                         <p>Create and manage awareness campaigns.</p>
@@ -30,7 +36,7 @@
                 </div>
 
                 <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
+                    <span class="benefit-icon" aria-hidden="true">✓</span>
                     <div>
                         <strong>Real-Time Analytics</strong>
                         <p>Monitor campaign activity and results.</p>
@@ -38,39 +44,53 @@
                 </div>
 
                 <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
+                    <span class="benefit-icon" aria-hidden="true">✓</span>
                     <div>
                         <strong>Security Awareness</strong>
                         <p>Help users recognize suspicious messages.</p>
                     </div>
                 </div>
+
             </div>
         </div>
 
         <!-- Right login card -->
         <div class="login-card">
+
             <div class="login-shield" aria-hidden="true">🛡️</div>
 
             <h2>Admin Login</h2>
+
             <p class="login-subtitle">
                 Sign in to access your dashboard
             </p>
 
+            <!-- Display Flask flash messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="login-message">
+                        <div class="login-message {{ category }}"
+                             role="alert">
                             {{ message }}
                         </div>
                     {% endfor %}
                 {% endif %}
             {% endwith %}
 
-            <form method="post" class="phish-login-form">
-                <input type="hidden" name="csrf_token"
-                       value="{{ csrf_token() }}">
+            <!-- IMPORTANT: Submit to the Flask login route -->
+            <form action="{{ url_for('login') }}"
+                  method="POST"
+                  class="phish-login-form">
+
+                <!-- Keep the CSRF token required by your application -->
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
 
                 <label for="username">Username</label>
+
                 <input
                     id="username"
                     type="text"
@@ -82,6 +102,7 @@
                 >
 
                 <label for="password">Password</label>
+
                 <input
                     id="password"
                     type="password"
@@ -90,25 +111,28 @@
                     autocomplete="current-password"
                     required
                 >
-<form action="{{ url_for('login') }}" method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                 <button type="submit" class="login-submit">
                     Sign In to Dashboard
                     <span aria-hidden="true">→</span>
                 </button>
+
             </form>
 
             <div class="login-security-note">
-                <span>🔒</span>
+                <span aria-hidden="true">🔒</span>
                 Secure administrator access
             </div>
 
             <a href="{{ url_for('index') }}" class="login-home-link">
                 ← Back to Home
             </a>
+
         </div>
 
     </div>
 </section>
+
 {% endblock %}
+```
 
