@@ -346,10 +346,9 @@ def send_email(to_addr, sender_name, sender_email, subject, html):
 # ---------------------------------------------------------------
 # Home and login routes
 # ---------------------------------------------------------------
-
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("login.html")
 
 
 @app.route("/login", methods=["GET", "POST"])

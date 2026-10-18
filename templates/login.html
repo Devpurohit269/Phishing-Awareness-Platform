@@ -1,18 +1,112 @@
+
 {% extends "base.html" %}
-{% block title %}Admin Login{% endblock %}
+{% block title %}Admin Login | PhishGuard{% endblock %}
+
 {% block content %}
-<div class="auth-wrap">
-  <form class="card auth-card" method="post">
+<section class="login-page">
+    <div class="login-layout">
+
+        <!-- Left welcome section -->
+        <div class="login-welcome">
+            <span class="login-badge">CYBERSECURITY AWARENESS</span>
+
+            <h1>Welcome Back to <span>PhishGuard</span></h1>
+
+            <p class="login-description">
+                Secure your organization with smarter phishing awareness
+                training. Manage campaigns, track results, and improve
+                cybersecurity awareness.
+            </p>
+
+            <div class="login-benefits">
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <div>
+                        <strong>Campaign Management</strong>
+                        <p>Create and manage awareness campaigns.</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <div>
+                        <strong>Real-Time Analytics</strong>
+                        <p>Monitor campaign activity and results.</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <div>
+                        <strong>Security Awareness</strong>
+                        <p>Help users recognize suspicious messages.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right login card -->
+        <div class="login-card">
+            <div class="login-shield" aria-hidden="true">🛡️</div>
+
+            <h2>Admin Login</h2>
+            <p class="login-subtitle">
+                Sign in to access your dashboard
+            </p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="login-message">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="post" class="phish-login-form">
+                <input type="hidden" name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <label for="username">Username</label>
+                <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    required
+                    autofocus
+                >
+
+                <label for="password">Password</label>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+<form action="{{ url_for('login') }}" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <h2>Admin Login</h2>
-    <label>Username
-      <input type="text" name="username" autocomplete="username" required autofocus>
-    </label>
-    <label>Password
-      <input type="password" name="password" autocomplete="current-password" required>
-    </label>
-    <button class="btn btn-primary btn-block" type="submit">Sign in</button>
-    <p class="hint">Default demo login: <code>admin</code> / <code>admin123</code></p>
-  </form>
-</div>
+                <button type="submit" class="login-submit">
+                    Sign In to Dashboard
+                    <span aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <div class="login-security-note">
+                <span>🔒</span>
+                Secure administrator access
+            </div>
+
+            <a href="{{ url_for('index') }}" class="login-home-link">
+                ← Back to Home
+            </a>
+        </div>
+
+    </div>
+</section>
 {% endblock %}
+
